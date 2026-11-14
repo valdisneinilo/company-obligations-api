@@ -77,31 +77,44 @@ public class CompanyRepositoryImpl implements CompanyRepository {
 
     @Override
     public void update(Company company) {
-    String sql = """
-        UPDATE empresas
-        SET
-            cnpj = ?,
-            nome_fantasia = ?,
-            razao_social = ?,
-            situacao = ?,
-            atualizado_por = ?
-        WHERE id = ?
-        """;
+        String sql = """
+                UPDATE empresas
+                SET
+                    cnpj = ?,
+                    nome_fantasia = ?,
+                    razao_social = ?,
+                    situacao = ?,
+                    atualizado_por = ?
+                WHERE id = ?
+                """;
 
-    jdbc.update(
-        sql,
-        company.getCnpj(),
-        company.getNomeFantasia(),
-        company.getRazaoSocial(),
-        company.getSituacao().name().equals("ACTIVE") ? "ATIVA" : "INATIVA",
-        company.getUpdatedBy() != null ? company.getUpdatedBy().toString() : null,
-        company.getId().toString()
-    );
+        jdbc.update(
+                sql,
+                company.getCnpj(),
+                company.getNomeFantasia(),
+                company.getRazaoSocial(),
+                company.getSituacao().name().equals("ACTIVE") ? "ATIVA" : "INATIVA",
+                company.getUpdatedBy() != null ? company.getUpdatedBy().toString() : null,
+                company.getId().toString());
     }
 
     @Override
-    public List<Company> findAll() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findAll'");
+    public List<Company> findAll(Integer page, Integer size) {
+        page = (page == null || page < 1) ? 1 : page;
+        size = (size == null || size < 1) ? 5 : size;
+        int offset = (page - 1) * size;
+
+        String sql = """
+                SELECT *
+                FROM empresas
+                ORDER BY data_criacao DESC
+                LIMIT ? OFFSET ?
+                """;
+
+        return jdbc.query(
+                sql,
+                new CompanyRowMapper(),
+                size,
+                offset);
     }
 }
