@@ -20,19 +20,19 @@ public class CreateCompanyUseCase {
     }
 
     public void execute(CreateCompanyInputDTO input) {
-        logger.info("Iniciando cadastro de empresa.");
-
-        if (companyRepository.existsByCnpj(input.cnpj())) {
-            logger.warn("Cadastro de empresa não realizado: CNPJ já cadastrado.");
-            throw new CompanyAlreadyExistsException();
-        }
-
         Company company = new Company(
                 UUID.randomUUID(),
                 input.cnpj(),
                 input.nomeFantasia(),
                 input.razaoSocial()
         );
+
+        if (companyRepository.existsByCnpj(company.getCnpj())) {
+            logger.warn("Cadastro de empresa não realizado: CNPJ já cadastrado.");
+            throw new CompanyAlreadyExistsException();
+        }
+
+
 
         companyRepository.save(company);
         logger.info("Empresa cadastrada com sucesso. ID: {}", company.getId());
