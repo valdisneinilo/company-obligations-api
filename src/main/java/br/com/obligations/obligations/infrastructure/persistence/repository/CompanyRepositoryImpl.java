@@ -100,8 +100,6 @@ public class CompanyRepositoryImpl implements CompanyRepository {
 
     @Override
     public List<Company> findAll(Integer page, Integer size) {
-        page = (page == null || page < 1) ? 1 : page;
-        size = (size == null || size < 1) ? 5 : size;
         int offset = (page - 1) * size;
 
         String sql = """
