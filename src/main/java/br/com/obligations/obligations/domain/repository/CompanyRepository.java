@@ -12,4 +12,5 @@ public interface CompanyRepository {
     boolean existsByCnpj(String cnpj);
     void update(Company company);
     List<Company> findAll(Integer page, Integer size);
+    long count();
 }

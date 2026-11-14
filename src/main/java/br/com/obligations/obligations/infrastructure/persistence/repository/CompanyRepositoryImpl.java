@@ -117,4 +117,16 @@ public class CompanyRepositoryImpl implements CompanyRepository {
                 size,
                 offset);
     }
+
+    @Override
+    public long count() {
+        String sql = """
+                SELECT COUNT(*)
+                FROM empresas
+                """;
+
+        Long total = jdbc.queryForObject(sql, Long.class);
+
+        return total != null ? total : 0L;
+    }
 }
