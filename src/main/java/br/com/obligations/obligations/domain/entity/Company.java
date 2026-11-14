@@ -168,4 +168,8 @@ public class Company {
     public void deactivate() {
         this.situacao = CompanyStatus.INACTIVE;
     }
+
+    public void changeCnpj(String cnpj) {
+        setCnpj(cnpj);
+    }
 }
