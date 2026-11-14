@@ -80,6 +80,8 @@ public class Company {
             throw new IllegalArgumentException(BLANK_CNPJ_EXCEPTION);
         }
 
+        cnpj = cnpj.replaceAll("[^0-9]", "");
+
         if (!CNPJ_PATTERN.matcher(cnpj).matches()) {
             throw new IllegalArgumentException(INCORRECT_CNPJ_EXCEPTION);
         }
