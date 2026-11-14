@@ -77,8 +77,26 @@ public class CompanyRepositoryImpl implements CompanyRepository {
 
     @Override
     public void update(Company company) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'update'");
+    String sql = """
+        UPDATE empresas
+        SET
+            cnpj = ?,
+            nome_fantasia = ?,
+            razao_social = ?,
+            situacao = ?,
+            atualizado_por = ?
+        WHERE id = ?
+        """;
+
+    jdbc.update(
+        sql,
+        company.getCnpj(),
+        company.getNomeFantasia(),
+        company.getRazaoSocial(),
+        company.getSituacao().name().equals("ACTIVE") ? "ATIVA" : "INATIVA",
+        company.getUpdatedBy() != null ? company.getUpdatedBy().toString() : null,
+        company.getId().toString()
+    );
     }
 
     @Override
