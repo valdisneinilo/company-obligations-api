@@ -11,6 +11,6 @@ public interface CompanyRepository {
     Optional<Company> findById(UUID id);
     boolean existsByCnpj(String cnpj);
     void update(Company company);
-    List<Company> findAll(Integer page, Integer size);
+    List<Company> findAll(int page, int size);
     long count();
 }

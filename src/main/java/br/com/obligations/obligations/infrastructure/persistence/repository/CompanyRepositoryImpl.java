@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import br.com.obligations.obligations.domain.entity.Company;
+import br.com.obligations.obligations.domain.enums.CompanyStatus;
 import br.com.obligations.obligations.domain.repository.CompanyRepository;
 import br.com.obligations.obligations.infrastructure.persistence.mapper.CompanyRowMapper;
 
@@ -38,7 +39,7 @@ public class CompanyRepositoryImpl implements CompanyRepository {
                 company.getCnpj(),
                 company.getNomeFantasia(),
                 company.getRazaoSocial(),
-                company.getSituacao().name().equals("ACTIVE") ? "ATIVA" : "INATIVA");
+                mapStatusToDatabase(company.getSituacao()));
     }
 
     @Override
@@ -93,13 +94,13 @@ public class CompanyRepositoryImpl implements CompanyRepository {
                 company.getCnpj(),
                 company.getNomeFantasia(),
                 company.getRazaoSocial(),
-                company.getSituacao().name().equals("ACTIVE") ? "ATIVA" : "INATIVA",
+                mapStatusToDatabase(company.getSituacao()),
                 company.getUpdatedBy() != null ? company.getUpdatedBy().toString() : null,
                 company.getId().toString());
     }
 
     @Override
-    public List<Company> findAll(Integer page, Integer size) {
+    public List<Company> findAll(int page, int size) {
         int offset = (page - 1) * size;
 
         String sql = """
@@ -127,4 +128,11 @@ public class CompanyRepositoryImpl implements CompanyRepository {
 
         return total != null ? total : 0L;
     }
+
+    private String mapStatusToDatabase(CompanyStatus status) {
+    return switch (status) {
+        case ACTIVE -> "ATIVA";
+        case INACTIVE -> "INATIVA";
+    };
+}
 }
