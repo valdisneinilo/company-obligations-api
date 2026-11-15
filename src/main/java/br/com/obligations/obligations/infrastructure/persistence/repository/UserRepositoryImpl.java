@@ -94,8 +94,20 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public List<User> findAll(int page, int size) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findAll'");
+        String sql = """
+                SELECT *
+                FROM usuarios
+                ORDER BY data_criacao DESC
+                LIMIT ? OFFSET ?
+                """;
+
+        int offset = (page - 1) * size;
+
+        return jdbc.query(
+                sql,
+                new UserRowMapper(),
+                size,
+                offset);
     }
 
     @Override
