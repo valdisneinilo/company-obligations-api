@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -21,10 +22,12 @@ import br.com.obligations.obligations.application.user.dto.UserPageOutputDTO;
 import br.com.obligations.obligations.application.user.usecase.CreateUserUseCase;
 import br.com.obligations.obligations.application.user.usecase.GetUserByIdUseCase;
 import br.com.obligations.obligations.application.user.usecase.ListUsersUseCase;
+import br.com.obligations.obligations.application.user.usecase.UpdateUserStatusUseCase;
 import br.com.obligations.obligations.application.user.usecase.UpdateUserUseCase;
 import br.com.obligations.obligations.domain.entity.User;
 import br.com.obligations.obligations.web.user.dto.CreateUserRequest;
 import br.com.obligations.obligations.web.user.dto.UpdateUserRequest;
+import br.com.obligations.obligations.web.user.dto.UpdateUserStatusRequest;
 import br.com.obligations.obligations.web.user.dto.UserPageResponse;
 import br.com.obligations.obligations.web.user.dto.UserResponse;
 import jakarta.validation.Valid;
@@ -37,16 +40,19 @@ public class UserController {
     private final GetUserByIdUseCase getUserByIdUseCase;
     private final ListUsersUseCase listUsersUseCase;
     private final UpdateUserUseCase updateUserUseCase;
+    private final UpdateUserStatusUseCase updateUserStatusUseCase;
 
     public UserController(
             CreateUserUseCase createUserUseCase,
             GetUserByIdUseCase getUserByIdUseCase,
             ListUsersUseCase listUsersUseCase,
-            UpdateUserUseCase updateUserUseCase) {
+            UpdateUserUseCase updateUserUseCase,
+            UpdateUserStatusUseCase updateUserStatusUseCase) {
         this.createUserUseCase = createUserUseCase;
         this.getUserByIdUseCase = getUserByIdUseCase;
         this.listUsersUseCase = listUsersUseCase;
         this.updateUserUseCase = updateUserUseCase;
+        this.updateUserStatusUseCase = updateUserStatusUseCase;
     }
 
     @PostMapping
@@ -123,6 +129,16 @@ public class UserController {
                 request.email());
 
         updateUserUseCase.execute(id, input);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<Void> updateStatus(
+            @PathVariable UUID id,
+            @Valid @RequestBody UpdateUserStatusRequest request) {
+
+        updateUserStatusUseCase.execute(id, request.status());
 
         return ResponseEntity.noContent().build();
     }
