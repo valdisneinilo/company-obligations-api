@@ -5,12 +5,14 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
 
 import br.com.obligations.obligations.domain.entity.Obligation;
 import br.com.obligations.obligations.domain.enums.ObligationStatus;
 import br.com.obligations.obligations.domain.repository.ObligationRepository;
 import br.com.obligations.obligations.infrastructure.persistence.mapper.ObligationRowMapper;
 
+@Repository
 public class ObligationRepositoryImpl implements ObligationRepository {
     private final JdbcTemplate jdbc;
 
