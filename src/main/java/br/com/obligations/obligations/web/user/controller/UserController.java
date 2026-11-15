@@ -1,6 +1,7 @@
 
 package br.com.obligations.obligations.web.user.controller;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
@@ -10,13 +11,17 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.obligations.obligations.application.user.dto.CreateUserInputDTO;
+import br.com.obligations.obligations.application.user.dto.UserPageOutputDTO;
 import br.com.obligations.obligations.application.user.usecase.CreateUserUseCase;
 import br.com.obligations.obligations.application.user.usecase.GetUserByIdUseCase;
+import br.com.obligations.obligations.application.user.usecase.ListUsersUseCase;
 import br.com.obligations.obligations.domain.entity.User;
 import br.com.obligations.obligations.web.user.dto.CreateUserRequest;
+import br.com.obligations.obligations.web.user.dto.UserPageResponse;
 import br.com.obligations.obligations.web.user.dto.UserResponse;
 import jakarta.validation.Valid;
 
@@ -26,12 +31,15 @@ public class UserController {
 
     private final CreateUserUseCase createUserUseCase;
     private final GetUserByIdUseCase getUserByIdUseCase;
+    private final ListUsersUseCase listUsersUseCase;
 
     public UserController(
             CreateUserUseCase createUserUseCase,
-            GetUserByIdUseCase getUserByIdUseCase) {
+            GetUserByIdUseCase getUserByIdUseCase,
+            ListUsersUseCase listUsersUseCase) {
         this.createUserUseCase = createUserUseCase;
         this.getUserByIdUseCase = getUserByIdUseCase;
+        this.listUsersUseCase = listUsersUseCase;
     }
 
     @PostMapping
@@ -64,6 +72,36 @@ public class UserController {
                 user.getUpdatedAt(),
                 user.getCreatedBy(),
                 user.getUpdatedBy());
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping
+    public ResponseEntity<UserPageResponse> findAll(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "5") int size) {
+
+        UserPageOutputDTO result = listUsersUseCase.execute(page, size);
+
+        List<UserResponse> users = result.content()
+                .stream()
+                .map(user -> new UserResponse(
+                        user.getId(),
+                        user.getName(),
+                        user.getEmail(),
+                        user.getStatus().name(),
+                        user.getCreatedAt(),
+                        user.getUpdatedAt(),
+                        user.getCreatedBy(),
+                        user.getUpdatedBy()))
+                .toList();
+
+        UserPageResponse response = new UserPageResponse(
+                users,
+                result.page(),
+                result.size(),
+                result.totalElements(),
+                result.totalPages());
 
         return ResponseEntity.ok(response);
     }
