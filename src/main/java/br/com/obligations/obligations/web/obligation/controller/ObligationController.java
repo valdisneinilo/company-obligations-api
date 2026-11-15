@@ -1,5 +1,6 @@
 package br.com.obligations.obligations.web.obligation.controller;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
@@ -9,13 +10,17 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.obligations.obligations.application.obligation.dto.CreateObligationInputDTO;
+import br.com.obligations.obligations.application.obligation.dto.ObligationPageOutputDTO;
 import br.com.obligations.obligations.application.obligation.usecase.CreateObligationUseCase;
 import br.com.obligations.obligations.application.obligation.usecase.GetObligationByIdUseCase;
+import br.com.obligations.obligations.application.obligation.usecase.ListObligationsUseCase;
 import br.com.obligations.obligations.domain.entity.Obligation;
 import br.com.obligations.obligations.web.obligation.dto.CreateObligationRequest;
+import br.com.obligations.obligations.web.obligation.dto.ObligationPageResponse;
 import br.com.obligations.obligations.web.obligation.dto.ObligationResponse;
 import jakarta.validation.Valid;
 
@@ -25,12 +30,15 @@ public class ObligationController {
 
     private final CreateObligationUseCase createObligationUseCase;
     private final GetObligationByIdUseCase getObligationByIdUseCase;
+    private final ListObligationsUseCase listObligationsUseCase;
 
     public ObligationController(
             CreateObligationUseCase createObligationUseCase,
-            GetObligationByIdUseCase getObligationByIdUseCase) {
+            GetObligationByIdUseCase getObligationByIdUseCase,
+            ListObligationsUseCase listObligationsUseCase) {
         this.createObligationUseCase = createObligationUseCase;
         this.getObligationByIdUseCase = getObligationByIdUseCase;
+        this.listObligationsUseCase = listObligationsUseCase;
     }
 
     @PostMapping
@@ -69,6 +77,39 @@ public class ObligationController {
                 obligation.getUpdatedAt(),
                 obligation.getCreatedBy(),
                 obligation.getUpdatedBy());
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping
+    public ResponseEntity<ObligationPageResponse> findAll(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "5") int size) {
+
+        ObligationPageOutputDTO result = listObligationsUseCase.execute(page, size);
+
+        List<ObligationResponse> obligations = result.obligations()
+                .stream()
+                .map(obligation -> new ObligationResponse(
+                        obligation.getId(),
+                        obligation.getTitle(),
+                        obligation.getDescription(),
+                        obligation.getCompanyId(),
+                        obligation.getResponsibleId(),
+                        obligation.getStatus().name(),
+                        obligation.getDueDate(),
+                        obligation.getCreatedAt(),
+                        obligation.getUpdatedAt(),
+                        obligation.getCreatedBy(),
+                        obligation.getUpdatedBy()))
+                .toList();
+
+        ObligationPageResponse response = new ObligationPageResponse(
+                obligations,
+                result.page(),
+                result.size(),
+                result.totalItems(),
+                result.totalPages());
 
         return ResponseEntity.ok(response);
     }

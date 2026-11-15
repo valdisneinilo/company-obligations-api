@@ -11,6 +11,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 @RestControllerAdvice
 @Order(Ordered.LOWEST_PRECEDENCE)
@@ -58,6 +59,20 @@ public class GlobalExceptionHandler {
                                 HttpStatus.BAD_REQUEST.value(),
                                 "INVALID_REQUEST_BODY",
                                 "O corpo da requisição contém dados inválidos.");
+
+                return ResponseEntity
+                                .status(HttpStatus.BAD_REQUEST)
+                                .body(response);
+        }
+
+        @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+        public ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatch(
+                        MethodArgumentTypeMismatchException exception) {
+
+                ErrorResponse response = new ErrorResponse(
+                                HttpStatus.BAD_REQUEST.value(),
+                                "INVALID_PARAMETER",
+                                "O parâmetro '" + exception.getName() + "' possui um valor ou formato inválido.");
 
                 return ResponseEntity
                                 .status(HttpStatus.BAD_REQUEST)
