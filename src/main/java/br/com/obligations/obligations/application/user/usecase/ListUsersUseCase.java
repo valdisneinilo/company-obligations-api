@@ -22,8 +22,6 @@ public class ListUsersUseCase {
         page = (page == null || page < 1) ? 1 : page;
         size = (size == null || size < 1) ? 5 : size;
 
-        logger.info("Iniciando listagem de usuários. Página: {}, Tamanho: {}", page, size);
-
         List<User> users = userRepository.findAll(page, size);
         long totalElements = userRepository.count();
 
