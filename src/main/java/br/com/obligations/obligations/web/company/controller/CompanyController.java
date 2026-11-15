@@ -84,7 +84,7 @@ public class CompanyController {
                 company.getCreatedAt(),
                 company.getUpdatedAt(),
                 company.getCreatedBy(),
-                company.getCreatedBy()
+                company.getUpdatedBy()
         );
 
         return ResponseEntity.ok(response);
