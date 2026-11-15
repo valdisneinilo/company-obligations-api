@@ -1,7 +1,11 @@
 package br.com.obligations.obligations.web.obligation.controller;
 
+import java.util.UUID;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,7 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.obligations.obligations.application.obligation.dto.CreateObligationInputDTO;
 import br.com.obligations.obligations.application.obligation.usecase.CreateObligationUseCase;
+import br.com.obligations.obligations.application.obligation.usecase.GetObligationByIdUseCase;
+import br.com.obligations.obligations.domain.entity.Obligation;
 import br.com.obligations.obligations.web.obligation.dto.CreateObligationRequest;
+import br.com.obligations.obligations.web.obligation.dto.ObligationResponse;
 import jakarta.validation.Valid;
 
 @RestController
@@ -17,9 +24,13 @@ import jakarta.validation.Valid;
 public class ObligationController {
 
     private final CreateObligationUseCase createObligationUseCase;
+    private final GetObligationByIdUseCase getObligationByIdUseCase;
 
-    public ObligationController(CreateObligationUseCase createObligationUseCase) {
+    public ObligationController(
+            CreateObligationUseCase createObligationUseCase,
+            GetObligationByIdUseCase getObligationByIdUseCase) {
         this.createObligationUseCase = createObligationUseCase;
+        this.getObligationByIdUseCase = getObligationByIdUseCase;
     }
 
     @PostMapping
@@ -38,5 +49,27 @@ public class ObligationController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .build();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ObligationResponse> getById(
+            @PathVariable UUID id) {
+
+        Obligation obligation = getObligationByIdUseCase.execute(id);
+
+        ObligationResponse response = new ObligationResponse(
+                obligation.getId(),
+                obligation.getTitle(),
+                obligation.getDescription(),
+                obligation.getCompanyId(),
+                obligation.getResponsibleId(),
+                obligation.getStatus().name(),
+                obligation.getDueDate(),
+                obligation.getCreatedAt(),
+                obligation.getUpdatedAt(),
+                obligation.getCreatedBy(),
+                obligation.getUpdatedBy());
+
+        return ResponseEntity.ok(response);
     }
 }

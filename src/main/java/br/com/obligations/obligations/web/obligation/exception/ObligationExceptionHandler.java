@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import br.com.obligations.obligations.application.obligation.exception.CompanyNotFoundException;
 import br.com.obligations.obligations.application.obligation.exception.InactiveCompanyException;
 import br.com.obligations.obligations.application.obligation.exception.InactiveUserException;
+import br.com.obligations.obligations.application.obligation.exception.ObligationNotFoundException;
 import br.com.obligations.obligations.application.obligation.exception.UserNotFoundException;
 import br.com.obligations.obligations.web.exception.ErrorResponse;
 
@@ -17,51 +18,65 @@ import br.com.obligations.obligations.web.exception.ErrorResponse;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class ObligationExceptionHandler {
 
-    @ExceptionHandler(CompanyNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleCompanyNotFound(
-            CompanyNotFoundException exception) {
+        @ExceptionHandler(CompanyNotFoundException.class)
+        public ResponseEntity<ErrorResponse> handleCompanyNotFound(
+                        CompanyNotFoundException exception) {
 
-        ErrorResponse response = new ErrorResponse(
-                HttpStatus.NOT_FOUND.value(),
-                "COMPANY_NOT_FOUND",
-                exception.getMessage());
+                ErrorResponse response = new ErrorResponse(
+                                HttpStatus.NOT_FOUND.value(),
+                                "COMPANY_NOT_FOUND",
+                                exception.getMessage());
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-    }
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
 
-    @ExceptionHandler(InactiveCompanyException.class)
-    public ResponseEntity<ErrorResponse> handleInactiveCompany(
-            InactiveCompanyException exception) {
+        @ExceptionHandler(InactiveCompanyException.class)
+        public ResponseEntity<ErrorResponse> handleInactiveCompany(
+                        InactiveCompanyException exception) {
 
-        ErrorResponse response = new ErrorResponse(
-                HttpStatus.UNPROCESSABLE_CONTENT.value(),
-                "INACTIVE_COMPANY",
-                exception.getMessage());
+                ErrorResponse response = new ErrorResponse(
+                                HttpStatus.UNPROCESSABLE_CONTENT.value(),
+                                "INACTIVE_COMPANY",
+                                exception.getMessage());
 
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT).body(response);
-    }
+                return ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT).body(response);
+        }
 
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleUserNotFound(
-            UserNotFoundException exception) {
+        @ExceptionHandler(UserNotFoundException.class)
+        public ResponseEntity<ErrorResponse> handleUserNotFound(
+                        UserNotFoundException exception) {
 
-        ErrorResponse response = new ErrorResponse(
-                HttpStatus.NOT_FOUND.value(),
-                "USER_NOT_FOUND",
-                exception.getMessage());
+                ErrorResponse response = new ErrorResponse(
+                                HttpStatus.NOT_FOUND.value(),
+                                "USER_NOT_FOUND",
+                                exception.getMessage());
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-    }
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
 
-    @ExceptionHandler(InactiveUserException.class)
-    public ResponseEntity<ErrorResponse> handleInactiveUser(
-            InactiveUserException exception) {
+        @ExceptionHandler(InactiveUserException.class)
+        public ResponseEntity<ErrorResponse> handleInactiveUser(
+                        InactiveUserException exception) {
 
-        ErrorResponse response = new ErrorResponse(
-                HttpStatus.UNPROCESSABLE_CONTENT.value(),
-                "INACTIVE_USER",
-                exception.getMessage());
+                ErrorResponse response = new ErrorResponse(
+                                HttpStatus.UNPROCESSABLE_CONTENT.value(),
+                                "INACTIVE_USER",
+                                exception.getMessage());
 
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT).body(response);
-    }
+                return ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT).body(response);
+        }
+
+        @ExceptionHandler(ObligationNotFoundException.class)
+        public ResponseEntity<ErrorResponse> handleObligationNotFound(
+                        ObligationNotFoundException exception) {
+
+                ErrorResponse response = new ErrorResponse(
+                                HttpStatus.NOT_FOUND.value(),
+                                "OBLIGATION_NOT_FOUND",
+                                exception.getMessage());
+
+                return ResponseEntity
+                                .status(HttpStatus.NOT_FOUND)
+                                .body(response);
+        }
 }
