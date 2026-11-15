@@ -11,7 +11,7 @@ import br.com.obligations.obligations.application.company.usecase.UpdateCompanyU
 import br.com.obligations.obligations.domain.repository.CompanyRepository;
 
 @Configuration
-public class UseCaseConfig {
+public class CompanyConfig {
     @Bean
     public CreateCompanyUseCase createCompanyUseCase(CompanyRepository companyRepository) {
         return new CreateCompanyUseCase(companyRepository);
