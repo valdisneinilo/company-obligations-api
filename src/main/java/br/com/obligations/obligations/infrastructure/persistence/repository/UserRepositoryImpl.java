@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import br.com.obligations.obligations.domain.entity.User;
 import br.com.obligations.obligations.domain.enums.UserStatus;
 import br.com.obligations.obligations.domain.repository.UserRepository;
+import br.com.obligations.obligations.infrastructure.persistence.mapper.UserRowMapper;
 
 @Repository
 public class UserRepositoryImpl implements UserRepository {
@@ -36,14 +37,23 @@ public class UserRepositoryImpl implements UserRepository {
                 user.getId().toString(),
                 user.getName(),
                 user.getEmail(),
-                mapStatusToDatabase(user.getStatus())
-        );
+                mapStatusToDatabase(user.getStatus()));
     }
 
     @Override
     public Optional<User> findById(UUID id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findById'");
+        String sql = """
+                SELECT *
+                FROM usuarios
+                WHERE id = ?
+                """;
+
+        List<User> users = jdbc.query(
+                sql,
+                new UserRowMapper(),
+                id.toString());
+
+        return users.stream().findFirst();
     }
 
     @Override
@@ -71,10 +81,10 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     private String mapStatusToDatabase(UserStatus status) {
-    return switch (status) {
-        case ACTIVE -> "ATIVA";
-        case INACTIVE -> "INATIVA";
-    };
-}
+        return switch (status) {
+            case ACTIVE -> "ATIVA";
+            case INACTIVE -> "INATIVA";
+        };
+    }
 
 }
