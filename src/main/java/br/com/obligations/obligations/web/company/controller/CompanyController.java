@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -20,12 +21,14 @@ import br.com.obligations.obligations.application.company.dto.UpdateCompanyInput
 import br.com.obligations.obligations.application.company.usecase.CreateCompanyUseCase;
 import br.com.obligations.obligations.application.company.usecase.GetCompanyByIdUseCase;
 import br.com.obligations.obligations.application.company.usecase.ListCompaniesUseCase;
+import br.com.obligations.obligations.application.company.usecase.UpdateCompanyStatusUseCase;
 import br.com.obligations.obligations.application.company.usecase.UpdateCompanyUseCase;
 import br.com.obligations.obligations.domain.entity.Company;
 import br.com.obligations.obligations.web.company.dto.CompanyPageResponse;
 import br.com.obligations.obligations.web.company.dto.CompanyResponse;
 import br.com.obligations.obligations.web.company.dto.CreateCompanyRequest;
 import br.com.obligations.obligations.web.company.dto.UpdateCompanyRequest;
+import br.com.obligations.obligations.web.company.dto.UpdateCompanyStatusRequestDTO;
 import jakarta.validation.Valid;
 
 @RestController
@@ -36,15 +39,18 @@ public class CompanyController {
     private final GetCompanyByIdUseCase getCompanyByIdUseCase;
     private final ListCompaniesUseCase listCompaniesUseCase;
     private final UpdateCompanyUseCase updateCompanyUseCase;
+    private final UpdateCompanyStatusUseCase updateCompanyStatusUseCase;
 
     public CompanyController(CreateCompanyUseCase createCompanyUseCase, 
         GetCompanyByIdUseCase getCompanyByIdUseCase,
         ListCompaniesUseCase listCompaniesUseCase, 
-        UpdateCompanyUseCase updateCompanyUseCase) {
+        UpdateCompanyUseCase updateCompanyUseCase,
+        UpdateCompanyStatusUseCase updateCompanyStatusUseCase) {
         this.createCompanyUseCase = createCompanyUseCase;
         this.getCompanyByIdUseCase = getCompanyByIdUseCase;
         this.listCompaniesUseCase = listCompaniesUseCase;
         this.updateCompanyUseCase = updateCompanyUseCase;
+        this.updateCompanyStatusUseCase = updateCompanyStatusUseCase;
     }
 
     @PostMapping
@@ -129,6 +135,16 @@ public class CompanyController {
         );
 
         updateCompanyUseCase.execute(id, input);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<Void> updateStatus(
+            @PathVariable UUID id,
+            @Valid @RequestBody UpdateCompanyStatusRequestDTO request) {
+
+        updateCompanyStatusUseCase.execute(id, request.status());
 
         return ResponseEntity.noContent().build();
     }
