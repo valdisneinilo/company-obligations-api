@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,13 +16,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.obligations.obligations.application.obligation.dto.CreateObligationInputDTO;
 import br.com.obligations.obligations.application.obligation.dto.ObligationPageOutputDTO;
+import br.com.obligations.obligations.application.obligation.dto.UpdateObligationInputDTO;
 import br.com.obligations.obligations.application.obligation.usecase.CreateObligationUseCase;
 import br.com.obligations.obligations.application.obligation.usecase.GetObligationByIdUseCase;
 import br.com.obligations.obligations.application.obligation.usecase.ListObligationsUseCase;
+import br.com.obligations.obligations.application.obligation.usecase.UpdateObligationUseCase;
 import br.com.obligations.obligations.domain.entity.Obligation;
 import br.com.obligations.obligations.web.obligation.dto.CreateObligationRequest;
 import br.com.obligations.obligations.web.obligation.dto.ObligationPageResponse;
 import br.com.obligations.obligations.web.obligation.dto.ObligationResponse;
+import br.com.obligations.obligations.web.obligation.dto.UpdateObligationRequest;
 import jakarta.validation.Valid;
 
 @RestController
@@ -31,14 +35,17 @@ public class ObligationController {
     private final CreateObligationUseCase createObligationUseCase;
     private final GetObligationByIdUseCase getObligationByIdUseCase;
     private final ListObligationsUseCase listObligationsUseCase;
+    private final UpdateObligationUseCase updateObligationUseCase;
 
     public ObligationController(
             CreateObligationUseCase createObligationUseCase,
             GetObligationByIdUseCase getObligationByIdUseCase,
-            ListObligationsUseCase listObligationsUseCase) {
+            ListObligationsUseCase listObligationsUseCase,
+            UpdateObligationUseCase updateObligationUseCase) {
         this.createObligationUseCase = createObligationUseCase;
         this.getObligationByIdUseCase = getObligationByIdUseCase;
         this.listObligationsUseCase = listObligationsUseCase;
+        this.updateObligationUseCase = updateObligationUseCase;
     }
 
     @PostMapping
@@ -112,5 +119,22 @@ public class ObligationController {
                 result.totalPages());
 
         return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> update(
+            @PathVariable UUID id,
+            @Valid @RequestBody UpdateObligationRequest request) {
+
+        UpdateObligationInputDTO input = new UpdateObligationInputDTO(
+                request.title(),
+                request.description(),
+                request.companyId(),
+                request.responsibleId(),
+                request.dueDate());
+
+        updateObligationUseCase.execute(id, input);
+
+        return ResponseEntity.noContent().build();
     }
 }

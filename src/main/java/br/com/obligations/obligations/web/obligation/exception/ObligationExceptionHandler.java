@@ -79,4 +79,18 @@ public class ObligationExceptionHandler {
                                 .status(HttpStatus.NOT_FOUND)
                                 .body(response);
         }
+
+        @ExceptionHandler(IllegalStateException.class)
+        public ResponseEntity<ErrorResponse> handleIllegalState(
+                        IllegalStateException exception) {
+
+                ErrorResponse response = new ErrorResponse(
+                                HttpStatus.CONFLICT.value(),
+                                "OBLIGATION_COMPLETED",
+                                exception.getMessage());
+
+                return ResponseEntity
+                                .status(HttpStatus.CONFLICT)
+                                .body(response);
+        }
 }
