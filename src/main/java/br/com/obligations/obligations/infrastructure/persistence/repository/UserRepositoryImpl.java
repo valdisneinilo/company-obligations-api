@@ -112,8 +112,13 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public long count() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'count'");
+        String sql = """
+                SELECT COUNT(*)
+                FROM usuarios
+                """;
+
+        Long total = jdbc.queryForObject(sql, Long.class);
+        return total != null ? total : 0L;
     }
 
     private String mapStatusToDatabase(UserStatus status) {
