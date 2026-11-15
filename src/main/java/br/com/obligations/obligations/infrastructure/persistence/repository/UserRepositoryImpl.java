@@ -58,8 +58,20 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public boolean existsByEmail(String email) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'existsByEmail'");
+        String sql = """
+                SELECT EXISTS(
+                    SELECT 1
+                    FROM usuarios
+                    WHERE email = ?
+                )
+                """;
+
+        Boolean exists = jdbc.queryForObject(
+                sql,
+                Boolean.class,
+                email);
+
+        return Boolean.TRUE.equals(exists);
     }
 
     @Override
