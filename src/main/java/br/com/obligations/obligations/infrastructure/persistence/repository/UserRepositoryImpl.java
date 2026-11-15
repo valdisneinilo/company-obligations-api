@@ -76,8 +76,20 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void update(User user) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'update'");
+        String sql = """
+                UPDATE usuarios SET
+                    nome = ?,
+                    email = ?,
+                    situacao = ?
+                WHERE id = ?
+                """;
+
+        jdbc.update(
+                sql,
+                user.getName(),
+                user.getEmail(),
+                mapStatusToDatabase(user.getStatus()),
+                user.getId().toString());
     }
 
     @Override
