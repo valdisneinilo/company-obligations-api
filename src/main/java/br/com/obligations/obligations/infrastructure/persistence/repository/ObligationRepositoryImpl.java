@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import br.com.obligations.obligations.domain.entity.Obligation;
 import br.com.obligations.obligations.domain.enums.ObligationStatus;
 import br.com.obligations.obligations.domain.repository.ObligationRepository;
+import br.com.obligations.obligations.infrastructure.persistence.mapper.ObligationRowMapper;
 
 public class ObligationRepositoryImpl implements ObligationRepository {
     private final JdbcTemplate jdbc;
@@ -44,26 +45,71 @@ public class ObligationRepositoryImpl implements ObligationRepository {
 
     @Override
     public Optional<Obligation> findById(UUID id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findById'");
+        String sql = """
+                SELECT *
+                FROM obrigacoes
+                WHERE id = ?
+                """;
+
+        List<Obligation> obligations = jdbc.query(
+                sql,
+                new ObligationRowMapper(),
+                id.toString());
+
+        return obligations.stream().findFirst();
     }
 
     @Override
     public void update(Obligation obligation) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'update'");
+        String sql = """
+                UPDATE obrigacoes SET
+                    titulo = ?,
+                    descricao = ?,
+                    empresa_id = ?,
+                    responsavel_id = ?,
+                    status = ?,
+                    data_vencimento = ?
+                WHERE id = ?
+                """;
+
+        jdbc.update(
+                sql,
+                obligation.getTitle(),
+                obligation.getDescription(),
+                obligation.getCompanyId().toString(),
+                obligation.getResponsibleId().toString(),
+                mapStatusToDatabase(obligation.getStatus()),
+                obligation.getDueDate(),
+                obligation.getId().toString());
     }
 
     @Override
     public List<Obligation> findAll(int page, int size) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findAll'");
+        String sql = """
+                SELECT *
+                FROM obrigacoes
+                ORDER BY data_criacao DESC
+                LIMIT ? OFFSET ?
+                """;
+
+        int offset = (page - 1) * size;
+
+        return jdbc.query(
+                sql,
+                new ObligationRowMapper(),
+                size,
+                offset);
     }
 
     @Override
     public long count() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'count'");
+        String sql = """
+                SELECT COUNT(*)
+                FROM obrigacoes
+                """;
+
+        Long total = jdbc.queryForObject(sql, Long.class);
+        return total != null ? total : 0L;
     }
 
     private String mapStatusToDatabase(ObligationStatus status) {
