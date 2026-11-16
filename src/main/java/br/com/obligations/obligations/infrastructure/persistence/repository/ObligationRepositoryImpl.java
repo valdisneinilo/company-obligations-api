@@ -114,6 +114,7 @@ public class ObligationRepositoryImpl implements ObligationRepository {
                     u.nome AS responsavel,
                     o.status,
                     COUNT(a.id) AS quantidade_anexos,
+                    o.data_criacao,
                     o.data_vencimento
                 FROM obrigacoes o
                 INNER JOIN empresas e ON e.id = o.empresa_id
@@ -125,8 +126,8 @@ public class ObligationRepositoryImpl implements ObligationRepository {
                     e.razao_social,
                     u.nome,
                     o.status,
-                    o.data_vencimento,
-                    o.data_criacao
+                    o.data_criacao,
+                    o.data_vencimento
                 ORDER BY o.data_criacao DESC
                 LIMIT ? OFFSET ?
                 """;
@@ -140,6 +141,7 @@ public class ObligationRepositoryImpl implements ObligationRepository {
                 rs.getString("responsavel"),
                 mapStatusFromDatabase(rs.getString("status")),
                 rs.getInt("quantidade_anexos"),
+                rs.getTimestamp("data_criacao").toLocalDateTime(),
                 rs.getDate("data_vencimento").toLocalDate()), size, offset);
     }
 

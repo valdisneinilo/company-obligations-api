@@ -188,6 +188,7 @@ public interface ObligationApiDocumentation {
                                     "responsibleName": "João da Silva",
                                     "status": "PENDING",
                                     "attachmentCount": 2,
+                                    "createdAt": "2026-12-10",
                                     "dueDate": "2026-12-10"
                                 },
                                 {
@@ -197,6 +198,7 @@ public interface ObligationApiDocumentation {
                                     "responsibleName": "Maria Oliveira",
                                     "status": "IN_PROGRESS",
                                     "attachmentCount": 1,
+                                    "createdAt": "2026-12-10",
                                     "dueDate": "2026-12-15"
                                 }
                             ],

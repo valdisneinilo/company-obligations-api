@@ -112,6 +112,7 @@ public class ObligationController {
                         obligation.responsibleName(),
                         obligation.status().name(),
                         obligation.attachmentCount(),
+                        obligation.createdAt(),
                         obligation.dueDate()))
                 .toList();
 

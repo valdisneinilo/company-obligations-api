@@ -1,6 +1,7 @@
 package br.com.obligations.obligations.web.obligation.dto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public record ObligationSummaryResponse(
@@ -10,4 +11,5 @@ public record ObligationSummaryResponse(
     String responsibleName,
     String status,
     int attachmentCount,
+    LocalDateTime createdAt,
     LocalDate dueDate) {}
