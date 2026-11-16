@@ -3,7 +3,7 @@ package br.com.obligations.obligations.web.obligation.dto;
 import java.util.List;
 
 public record ObligationPageResponse(
-    List<ObligationResponse> content,
+    List<ObligationSummaryResponse> content,
     int page,
     int size,
     long totalElements,
