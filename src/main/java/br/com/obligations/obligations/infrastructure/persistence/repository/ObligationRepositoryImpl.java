@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import br.com.obligations.obligations.application.obligation.dto.ObligationSummaryOutputDTO;
 import br.com.obligations.obligations.domain.entity.Obligation;
 import br.com.obligations.obligations.domain.enums.ObligationStatus;
 import br.com.obligations.obligations.domain.repository.ObligationRepository;
@@ -104,6 +105,45 @@ public class ObligationRepositoryImpl implements ObligationRepository {
     }
 
     @Override
+    public List<ObligationSummaryOutputDTO> findAllSummaries(int page, int size) {
+        String sql = """
+                SELECT
+                    o.id,
+                    o.titulo,
+                    e.razao_social AS empresa,
+                    u.nome AS responsavel,
+                    o.status,
+                    COUNT(a.id) AS quantidade_anexos,
+                    o.data_vencimento
+                FROM obrigacoes o
+                INNER JOIN empresas e ON e.id = o.empresa_id
+                INNER JOIN usuarios u ON u.id = o.responsavel_id
+                LEFT JOIN anexos a ON a.obrigacao_id = o.id
+                GROUP BY
+                    o.id,
+                    o.titulo,
+                    e.razao_social,
+                    u.nome,
+                    o.status,
+                    o.data_vencimento,
+                    o.data_criacao
+                ORDER BY o.data_criacao DESC
+                LIMIT ? OFFSET ?
+                """;
+
+        int offset = (page - 1) * size;
+
+        return jdbc.query(sql, (rs, rowNum) -> new ObligationSummaryOutputDTO(
+                UUID.fromString(rs.getString("id")),
+                rs.getString("titulo"),
+                rs.getString("empresa"),
+                rs.getString("responsavel"),
+                mapStatusFromDatabase(rs.getString("status")),
+                rs.getInt("quantidade_anexos"),
+                rs.getDate("data_vencimento").toLocalDate()), size, offset);
+    }
+
+    @Override
     public long count() {
         String sql = """
                 SELECT COUNT(*)
@@ -119,6 +159,16 @@ public class ObligationRepositoryImpl implements ObligationRepository {
             case PENDING -> "PENDENTE";
             case IN_PROGRESS -> "EM_ANDAMENTO";
             case COMPLETED -> "CONCLUIDA";
+        };
+    }
+
+    private ObligationStatus mapStatusFromDatabase(String status) {
+        return switch (status) {
+            case "PENDENTE" -> ObligationStatus.PENDING;
+            case "EM_ANDAMENTO" -> ObligationStatus.IN_PROGRESS;
+            case "CONCLUIDA" -> ObligationStatus.COMPLETED;
+            default -> throw new IllegalArgumentException(
+                    "Status de obrigação inválido no banco de dados: " + status);
         };
     }
 

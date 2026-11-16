@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.com.obligations.obligations.application.obligation.dto.ObligationPageOutputDTO;
-import br.com.obligations.obligations.domain.entity.Obligation;
+import br.com.obligations.obligations.application.obligation.dto.ObligationSummaryOutputDTO;
 import br.com.obligations.obligations.domain.repository.ObligationRepository;
 
 public class ListObligationsUseCase {
@@ -23,7 +23,7 @@ public class ListObligationsUseCase {
         page = (page == null || page < 1) ? 1 : page;
         size = (size == null || size < 1) ? 5 : size;
 
-        List<Obligation> obligations = obligationRepository.findAll(page, size);
+        List<ObligationSummaryOutputDTO> obligations = obligationRepository.findAllSummaries(page, size);
         long totalItems = obligationRepository.count();
 
         int totalPages = (int) Math.ceil((double) totalItems / size);

@@ -28,6 +28,7 @@ import br.com.obligations.obligations.domain.entity.Obligation;
 import br.com.obligations.obligations.web.obligation.dto.CreateObligationRequest;
 import br.com.obligations.obligations.web.obligation.dto.ObligationPageResponse;
 import br.com.obligations.obligations.web.obligation.dto.ObligationResponse;
+import br.com.obligations.obligations.web.obligation.dto.ObligationSummaryResponse;
 import br.com.obligations.obligations.web.obligation.dto.UpdateObligationRequest;
 import br.com.obligations.obligations.web.obligation.dto.UpdateObligationStatusRequest;
 import jakarta.validation.Valid;
@@ -102,20 +103,16 @@ public class ObligationController {
 
         ObligationPageOutputDTO result = listObligationsUseCase.execute(page, size);
 
-        List<ObligationResponse> obligations = result.obligations()
+        List<ObligationSummaryResponse> obligations = result.obligations()
                 .stream()
-                .map(obligation -> new ObligationResponse(
-                        obligation.getId(),
-                        obligation.getTitle(),
-                        obligation.getDescription(),
-                        obligation.getCompanyId(),
-                        obligation.getResponsibleId(),
-                        obligation.getStatus().name(),
-                        obligation.getDueDate(),
-                        obligation.getCreatedAt(),
-                        obligation.getUpdatedAt(),
-                        obligation.getCreatedBy(),
-                        obligation.getUpdatedBy()))
+                .map(obligation -> new ObligationSummaryResponse(
+                        obligation.id(),
+                        obligation.title(),
+                        obligation.companyName(),
+                        obligation.responsibleName(),
+                        obligation.status().name(),
+                        obligation.attachmentCount(),
+                        obligation.dueDate()))
                 .toList();
 
         ObligationPageResponse response = new ObligationPageResponse(
