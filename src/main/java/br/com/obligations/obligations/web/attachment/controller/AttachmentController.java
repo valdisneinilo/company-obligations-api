@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.obligations.obligations.application.attachment.dto.AttachmentOutputDTO;
 import br.com.obligations.obligations.application.attachment.dto.CreateAttachmentInputDTO;
 import br.com.obligations.obligations.application.attachment.usecase.CreateAttachmentUseCase;
 import br.com.obligations.obligations.application.attachment.usecase.ListAttachmentsByObligationUseCase;
@@ -37,8 +36,6 @@ public class AttachmentController {
     @PostMapping
     public ResponseEntity<Void> create(
             @Valid @RequestBody CreateAttachmentRequest request) {
-
-                System.out.println("ENTROU NO CONTROLLER");
 
         CreateAttachmentInputDTO input = new CreateAttachmentInputDTO(
                 request.obligationId(),
