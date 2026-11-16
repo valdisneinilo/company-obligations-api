@@ -22,6 +22,7 @@ public class GlobalExceptionHandler {
         @ExceptionHandler(MethodArgumentNotValidException.class)
         public ResponseEntity<ErrorResponse> handleValidationException(
                         MethodArgumentNotValidException exception) {
+                                logger.error("O corpo da requisição contém dados inválidos.", exception);
 
                 FieldError fieldError = exception.getBindingResult()
                                 .getFieldErrors()
@@ -40,6 +41,7 @@ public class GlobalExceptionHandler {
         @ExceptionHandler(IllegalArgumentException.class)
         public ResponseEntity<ErrorResponse> handleIllegalArgument(
                         IllegalArgumentException exception) {
+                                logger.error("O corpo da requisição contém dados inválidos.", exception);
 
                 ErrorResponse response = new ErrorResponse(
                                 HttpStatus.BAD_REQUEST.value(),
@@ -54,6 +56,7 @@ public class GlobalExceptionHandler {
         @ExceptionHandler(HttpMessageNotReadableException.class)
         public ResponseEntity<ErrorResponse> handleInvalidRequestBody(
                         HttpMessageNotReadableException exception) {
+                                logger.error("O corpo da requisição contém dados inválidos.", exception);
 
                 ErrorResponse response = new ErrorResponse(
                                 HttpStatus.BAD_REQUEST.value(),
@@ -68,6 +71,7 @@ public class GlobalExceptionHandler {
         @ExceptionHandler(MethodArgumentTypeMismatchException.class)
         public ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatch(
                         MethodArgumentTypeMismatchException exception) {
+                                logger.error("O parâmetro '" + exception.getName() + "' possui um valor ou formato inválido.", exception);
 
                 ErrorResponse response = new ErrorResponse(
                                 HttpStatus.BAD_REQUEST.value(),
