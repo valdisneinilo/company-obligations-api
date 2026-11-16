@@ -15,13 +15,14 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.obligations.obligations.application.attachment.dto.CreateAttachmentInputDTO;
 import br.com.obligations.obligations.application.attachment.usecase.CreateAttachmentUseCase;
 import br.com.obligations.obligations.application.attachment.usecase.ListAttachmentsByObligationUseCase;
+import br.com.obligations.obligations.web.attachment.documentation.AttachmentApiDocumentation;
 import br.com.obligations.obligations.web.attachment.dto.AttachmentResponse;
 import br.com.obligations.obligations.web.attachment.dto.CreateAttachmentRequest;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/${api.version}/attachments")
-public class AttachmentController {
+public class AttachmentController implements AttachmentApiDocumentation{
 
     private final CreateAttachmentUseCase createAttachmentUseCase;
     private final ListAttachmentsByObligationUseCase listAttachmentsByObligationUseCase;

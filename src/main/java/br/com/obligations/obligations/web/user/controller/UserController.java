@@ -25,6 +25,7 @@ import br.com.obligations.obligations.application.user.usecase.ListUsersUseCase;
 import br.com.obligations.obligations.application.user.usecase.UpdateUserStatusUseCase;
 import br.com.obligations.obligations.application.user.usecase.UpdateUserUseCase;
 import br.com.obligations.obligations.domain.entity.User;
+import br.com.obligations.obligations.web.user.documentation.UserApiDocumentation;
 import br.com.obligations.obligations.web.user.dto.CreateUserRequest;
 import br.com.obligations.obligations.web.user.dto.UpdateUserRequest;
 import br.com.obligations.obligations.web.user.dto.UpdateUserStatusRequest;
@@ -34,7 +35,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/${api.version}/users")
-public class UserController {
+public class UserController implements UserApiDocumentation {
 
     private final CreateUserUseCase createUserUseCase;
     private final GetUserByIdUseCase getUserByIdUseCase;
